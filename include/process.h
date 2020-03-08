@@ -1,5 +1,6 @@
 #ifndef PROCESS_H
 #define PROCESS_H
+#include "linux_parser.h"
 
 #include <string>
 /*
