@@ -147,13 +147,11 @@ vector<string> LinuxParser::CpuUtilization() {
       {
         std::istringstream linestream(line);
         linestream>>temp>>user>>nice>>system>>idle>>iowait>>irq>>softirq>>steal>>guest>>guest_nice;
-        
+        cpu_util.push_back("50%");
       }
-      
-
     }
   }
-  return {}; 
+  return cpu_util; 
 }
 
 // TODO: Read and return the total number of processes
