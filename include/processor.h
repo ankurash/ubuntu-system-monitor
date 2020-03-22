@@ -8,7 +8,8 @@ class Processor {
 
   // TODO: Declare any necessary private members
  private:
- int USER_HZ = 100;
+    // int USER_HZ = 100;
+    long totalJiffiesStart=0, activeJiffiesStart=0, totalJiffiesEnd=0, activeJiffiesEnd=0;
 };
 
 #endif
