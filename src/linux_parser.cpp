@@ -116,20 +116,6 @@ long LinuxParser::Jiffies() {
     val += stol(cpuUtilization[i]);
   }
   return val;
-  // std::ifstream filestream(kProcDirectory + kTimerList);
-  // string line, temp;
-  // long jiffies;
-  // if (filestream.is_open()) {
-  //   while (std::getline(filestream, line)) {
-  //     if(line.find("jiffies: ") != std::string::npos)
-  //     {
-  //       std::istringstream linestream(line);
-  //       linestream >> temp >> jiffies;
-  //       return jiffies;
-  //     }
-  //   }
-  // }
-  // return 0;
 }
 
 // TODO: Read and return the number of active jiffies for a PID
@@ -144,7 +130,7 @@ long LinuxParser::ActiveJiffies(int pid) {
     for(int i=0; i<13; i++) linestream>>temp;
     linestream>>utime>>stime>>cutime>>cstime;
   }
-  return utime+stime+cutime+cstime;
+  return utime+stime+cutime+cstime; //consider child processes as well
 }
 
 // TODO: Read and return the number of active jiffies for the system
@@ -169,7 +155,7 @@ vector<string> LinuxParser::CpuUtilization() {
   std::ifstream filestream(kProcDirectory + kStatFilename);
   if(filestream.is_open())
   {
-    if(getline(filestream, line))
+    if(getline(filestream, line)) //only reading the first line
     {
       if(line.find("cpu") != std::string::npos)
       {
@@ -219,7 +205,7 @@ int LinuxParser::RunningProcesses() {
     {
       std::istringstream linestream(line);
       linestream>>temp>>temp>>pstate;
-      if(pstate=='R' || pstate=='S')
+      if(pstate=='R' || pstate=='S')  //consider running or suspended processes as running
         runningProcessesCount++;
     }
   }
@@ -233,7 +219,7 @@ string LinuxParser::Command(int pid) {
   std::ifstream filestream(kProcDirectory + to_string(pid) + kCmdlineFilename);
   if(filestream.is_open())
   {
-    std::getline(filestream, line);
+    std::getline(filestream, line); //However, some processes don't have this file
     return line;
   }
   return string();
@@ -253,7 +239,7 @@ string LinuxParser::Ram(int pid) {
       {
         std::istringstream linestream(line);
         linestream >> temp >> mem >> unit;
-        mem = mem/1024;
+        mem = mem/1024; //convert to Mb
         return to_string(mem);
       }
     }

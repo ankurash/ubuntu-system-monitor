@@ -28,9 +28,19 @@ float Process::CpuUtilization() {
   float totalTime = float(LinuxParser::ActiveJiffies(pid_));
   float startTime = float(LinuxParser::UpTime(pid_));
   long upTime = LinuxParser::UpTime();
-  
   float seconds = upTime - (startTime / sysconf(_SC_CLK_TCK));
-  return (totalTime / sysconf(_SC_CLK_TCK))/ seconds;
+  
+  float currentSeconds = seconds-prevSeconds;
+  float currentTotalTime = totalTime-prevTotalTime;
+  if(seconds<prevSeconds)   //Probably is a new process
+  {
+    currentSeconds = seconds;
+    currentTotalTime = totalTime;
+  }
+  currentCpuUtilization = (currentTotalTime / sysconf(_SC_CLK_TCK))/ currentSeconds;
+  prevSeconds = seconds;
+  prevTotalTime = totalTime;
+  return currentCpuUtilization;
 }
 
 // TODO: Return the command that generated this process
@@ -56,7 +66,7 @@ long int Process::UpTime() {
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const {
-    return stol(LinuxParser::Ram(pid_)) > stol(LinuxParser::Ram(a.pid_));
-    // return CpuUtilization() > a.CpuUtilization();
+    // return stol(LinuxParser::Ram(pid_)) > stol(LinuxParser::Ram(a.pid_));    //sort by Ram utilization
+     return currentCpuUtilization > a.currentCpuUtilization;    //sort by cpu utilization
 }
 

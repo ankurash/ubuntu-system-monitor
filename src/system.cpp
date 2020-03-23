@@ -16,14 +16,36 @@ using std::vector;
 // TODO: Return the system's CPU
 Processor& System::Cpu() { 
 	//Processor cpu;
-	return cpu_; }
+	return cpu_;
+}
 
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() {
 	vector<int> pids = LinuxParser::Pids();
+	//remove terminated processes
+	for(int i=0; i<int(processes_.size()); i++)
+	{
+		if(std::find(pids.begin(), pids.end(), processes_[i].Pid()) == pids.end())
+		{
+			processes_.erase(processes_.begin()+i);
+			i--;
+		}
+	}
+
+	//Add new processes without reinitializing old processes
 	for(int pid: pids)
 	{
-		processes_.push_back(Process(pid));
+		bool processExists= false;
+		for(int i=0; i<int(processes_.size()); i++)
+		{
+			if(processes_[i].Pid() == pid)
+			{
+				processExists=true;
+				break;
+			}
+		}
+		if(!processExists)
+			processes_.push_back(Process(pid));
 	}
 	std::sort(processes_.begin(), processes_.end());
 	return processes_;

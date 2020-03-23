@@ -8,7 +8,6 @@ using std::vector;
 using std::string;
 
 float Processor::Utilization() { 
-  //vector<string> cpu_utils = LinuxParser::CpuUtilization();
   totalJiffiesStart = LinuxParser::Jiffies();
   activeJiffiesStart = LinuxParser::ActiveJiffies();
   

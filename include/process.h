@@ -20,6 +20,7 @@ class Process {
   // TODO: Declare any necessary private members
  private:
  	int pid_;
+     float prevTotalTime=0, prevSeconds=0, currentCpuUtilization=0; //for instantaneous cpu utilization calculation
 };
 
 #endif
